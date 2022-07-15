@@ -3,6 +3,7 @@ import 'package:dating/components/constants.dart';
 import 'package:dating/widgets/input_data.dart';
 import 'package:dating/widgets/signin_button.dart';
 import 'package:flutter_tags/flutter_tags.dart';
+import 'package:location/location.dart';
 
 double height = 0;
 double width = 0;
@@ -19,7 +20,9 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   String? gender;
+  String? intrestedGender;
   int age = 18;
+  int showdistance = 1;
   int _activeStepIndex = 0;
   List _interests = [];
 
@@ -31,9 +34,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController tagsController = TextEditingController();
   TextEditingController locationController = TextEditingController();
 
+  //range for preference in age
+  RangeValues _showAgeRange = const RangeValues(20, 30);
+
   genderChange(Object? value) {
     setState(() {
       gender = value.toString();
+    });
+  }
+
+  intrestedGenderChange(Object? value) {
+    setState(() {
+      intrestedGender = value.toString();
     });
   }
 
@@ -145,7 +157,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 //Age
-                const TextModi(text: "Age"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const TextModi(text: "Age"),
+                    TextModi(text: age.toString())
+                  ],
+                ),
                 Container(
                   height: 0.07 * height,
                   decoration: BoxDecoration(
@@ -161,7 +179,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         activeTrackColor: kPurpleColor,
                         inactiveTrackColor: kPurpleColor),
                     child: Slider(
-                      label: age.toString(),
                       divisions: 52,
                       min: 18,
                       max: 70,
@@ -241,7 +258,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   text: "Location",
                   fieldText: 'Enter Location',
                   iconData: Icons.location_on_outlined,
-                  ontap: () {},
+                  ontap: () async {
+                    final location = await getLocation();
+                    setState(() {
+                      locationController.text =
+                          "Location: ${location.latitude}, ${location.longitude}";
+                    });
+                  },
                 )
               ],
             )),
@@ -250,10 +273,99 @@ class _SignUpScreenState extends State<SignUpScreen> {
             "",
           ),
           isActive: _activeStepIndex >= 2,
-          content: Container(
-            height: 30,
-            width: 30,
-            color: kPurpleColor,
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const TextModi(text: 'Intrested In:'),
+              Row(
+                children: [
+                  GenderSelector(
+                    gender: intrestedGender,
+                    text: "Male",
+                    value: "male",
+                    onTouch: intrestedGenderChange,
+                  ),
+                  SizedBox(
+                    width: 0.07 * width,
+                  ),
+                  GenderSelector(
+                      gender: intrestedGender,
+                      text: "Female",
+                      value: "female",
+                      onTouch: intrestedGenderChange),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const TextModi(text: "Show Ages:"),
+                  TextModi(
+                      text:
+                          "${_showAgeRange.start.round().toString()} - ${_showAgeRange.end.round().toString()}")
+                ],
+              ),
+              Container(
+                height: 0.07 * height,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade500),
+                  borderRadius: BorderRadius.circular(17),
+                ),
+                child: SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                      valueIndicatorColor: kBackgroundColor,
+                      valueIndicatorTextStyle:
+                          const TextStyle(color: kPurpleColor),
+                      thumbColor: kPinkColor,
+                      activeTrackColor: kPurpleColor,
+                      inactiveTrackColor: kPurpleColor),
+                  child: RangeSlider(
+                    divisions: 52,
+                    min: 18,
+                    max: 70,
+                    values: _showAgeRange,
+                    onChanged: (RangeValues values) {
+                      setState(() {
+                        _showAgeRange = values;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const TextModi(text: 'Show Distance:'),
+                  TextModi(text: "${showdistance.toString()} mi"),
+                ],
+              ),
+              Container(
+                height: 0.07 * height,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade500),
+                  borderRadius: BorderRadius.circular(17),
+                ),
+                child: SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                      valueIndicatorColor: kBackgroundColor,
+                      valueIndicatorTextStyle:
+                          const TextStyle(color: kPurpleColor),
+                      thumbColor: kPinkColor,
+                      activeTrackColor: kPurpleColor,
+                      inactiveTrackColor: kPurpleColor),
+                  child: Slider(
+                    divisions: 50,
+                    min: 1,
+                    max: 50,
+                    value: showdistance.toDouble(),
+                    onChanged: (value) {
+                      setState(() {
+                        showdistance = value.toInt();
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ];
