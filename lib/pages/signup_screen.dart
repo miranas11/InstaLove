@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dating/components/constants.dart';
 import 'package:dating/widgets/input_data.dart';
 import 'package:dating/widgets/signin_button.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:location/location.dart';
 
@@ -24,7 +25,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   int age = 18;
   int showdistance = 1;
   int _activeStepIndex = 0;
-  List _interests = [];
+  final List _interests = [];
 
   TextEditingController emailController = TextEditingController();
   TextEditingController firstController = TextEditingController();
@@ -424,7 +425,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     marginWidthPercent: 0.0,
                     text: _activeStepIndex == 2 ? 'Submit' : 'Continue',
                     noIcon: true,
-                    onTap: details.onStepContinue,
+                    onTap: _activeStepIndex == 2
+                        ? () => Navigator.pushNamed(context, "main_screen")
+                        : details.onStepContinue,
                   ),
                 ],
               );

@@ -1,4 +1,5 @@
 import 'package:dating/components/constants.dart';
+import 'package:dating/pages/main_screen.dart';
 import 'package:dating/pages/signup_screen.dart';
 import 'package:dating/pages/start_screen.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
       routes: {
         StartScreen.id: (context) => const StartScreen(),
         SignUpScreen.id: (context) => const SignUpScreen(),
+        MainScreen.id: (context) => const MainScreen(),
       },
     );
   }
